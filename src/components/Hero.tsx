@@ -9,37 +9,18 @@ interface HeroProps {
 
 export const Hero: React.FC<HeroProps> = ({ 
   onComecarEstudar, 
-  onRecarregarPagina,
-  emAtualizacao = false
 }) => {
-  const [animandoClique, setAnimandoClique] = useState(false);
+  const [recarregando, setRecarregando] = useState(false);
 
-  // Diagnóstico de Performance: Recarregamento Instantâneo sem overhead de rede (0ms)
-  const handleAtualizarPagina = (e: React.MouseEvent) => {
-    // Efeito tátil imediato no botão
-    setAnimandoClique(true);
-
-    if (e.shiftKey) {
-      // Se pressionado com Shift, executa recarga bruta do navegador
+  // Executa o recarregamento REAL da página no navegador (Cloudflare Workers / Web)
+  const handleAtualizarPagina = () => {
+    setRecarregando(true);
+    try {
       window.location.reload();
-      return;
+    } catch {
+      window.location.href = window.location.href;
     }
-
-    // Execução instantânea: limpa estado e reposiciona no topo imediatamente
-    if (onRecarregarPagina) {
-      onRecarregarPagina();
-    } else {
-      window.scrollTo({ top: 0, behavior: 'instant' });
-      window.location.reload();
-    }
-
-    // Restaura o indicador rapidamente
-    setTimeout(() => {
-      setAnimandoClique(false);
-    }, 400);
   };
-
-  const estaGirando = emAtualizacao || animandoClique;
 
   return (
     <section id="inicio" className="bg-gradient-to-b from-slate-950 via-[#0c1836] to-slate-950 text-white pt-10 pb-16 md:pt-14 md:pb-22 border-b border-slate-800 relative overflow-hidden">
@@ -60,19 +41,19 @@ export const Hero: React.FC<HeroProps> = ({
         {/* ============================================================== */}
         <div className="flex flex-col items-center justify-center mb-8">
           
-          {/* BOTÃO CENTRAL DE DESTAQUE (Ícone da Imagem) */}
+          {/* BOTÃO CENTRAL DE DESTAQUE (Ícone da Imagem - Recarrega a página de verdade) */}
           <div className="relative group mb-6">
             <button
               onClick={handleAtualizarPagina}
-              aria-label="Atualizar página instantaneamente"
-              title="Atualizar página instantaneamente"
+              aria-label="Recarregar página"
+              title="Recarregar página"
               className="relative w-24 h-24 sm:w-28 sm:h-28 rounded-2xl sm:rounded-3xl bg-[#143275] hover:bg-[#1a3d8f] active:bg-[#10275a] border-2 border-blue-400/30 hover:border-blue-300 shadow-xl shadow-blue-950/80 hover:shadow-blue-600/30 flex flex-col items-center justify-center transition-all duration-150 transform hover:scale-105 active:scale-95 cursor-pointer focus:outline-none focus:ring-4 focus:ring-blue-500/40"
             >
               {/* Ícone idêntico ao da imagem fornecida: Marcador azul com checkmark */}
               <svg
                 viewBox="0 0 48 48"
                 className={`w-13 h-13 sm:w-15 sm:h-15 text-blue-300 transition-transform duration-200 ${
-                  estaGirando ? 'animate-spin scale-110' : 'group-hover:scale-105'
+                  recarregando ? 'animate-spin scale-110' : 'group-hover:scale-105'
                 }`}
                 fill="none"
                 xmlns="http://www.w3.org/2000/svg"
@@ -95,9 +76,9 @@ export const Hero: React.FC<HeroProps> = ({
                 />
               </svg>
 
-              {/* Mini indicador discreto de atualização no canto inferior */}
+              {/* Mini indicador de atualização no canto inferior */}
               <span className="absolute bottom-1.5 right-1.5 bg-blue-900/90 text-blue-200 p-1 rounded-full border border-blue-500/40 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                <RotateCw className={`w-3 h-3 ${estaGirando ? 'animate-spin text-white' : ''}`} />
+                <RotateCw className={`w-3 h-3 ${recarregando ? 'animate-spin text-white' : ''}`} />
               </span>
             </button>
           </div>
