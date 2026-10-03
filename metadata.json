@@ -1,0 +1,6 @@
+{
+  "name": "Horizonte Educativo",
+  "description": "Plataforma moçambicana de preparação para exames de admissão universitária (UEM, UP, UniZambeze, UniLúrio) com simulados rápidos e baixo consumo de dados.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
